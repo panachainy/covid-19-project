@@ -1,4 +1,4 @@
-package covid
+package covidservice
 
 type AgeGroup struct {
 	ZeroTo30      int `json:"0-30"`
