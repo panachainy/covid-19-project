@@ -14,7 +14,6 @@ func GetSummaryHandler(service covidservice.CovidService) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		result, err := service.GetCovidSummary()
 		if err != nil {
-			// TODO: check it should be internalError or not?
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"message": err.Error(),
 			})
