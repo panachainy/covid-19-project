@@ -1,6 +1,7 @@
 package covidhandler
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -47,6 +48,22 @@ func TestGetSummaryHandler(t *testing.T) {
 				body:       `{"AgeGroup": {"0-30":4, "31-60":10, "61+":2, "N/A":1}, "Province": {"Amnat Charoen":17}}`,
 			},
 		},
+		{
+			name: "when_service_error_should_error",
+			args: args{
+				service: func(ctrl *gomock.Controller) covidservice.CovidService {
+					mock := mockcovidservice.NewMockCovidService(ctrl)
+
+					mock.EXPECT().GetCovidSummary().Return(nil, fmt.Errorf("error from service ja"))
+
+					return mock
+				},
+			},
+			want: want{
+				statusCode: 500,
+				body:       `{"message":"error from service ja"}`,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -59,7 +76,6 @@ func TestGetSummaryHandler(t *testing.T) {
 			c, _ := gin.CreateTestContext(w)
 
 			c.Request = &http.Request{
-				// URL:    &url.URL{},
 				Header: make(http.Header),
 			}
 
