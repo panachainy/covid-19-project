@@ -10,6 +10,9 @@ tidy:
 test:
 	go test  ./...
 
+test.cov:
+	go test -v -race -covermode=atomic -coverprofile=coverage.out ./...
+
 gosec:
 	gosec ./...
 

@@ -1,9 +1,8 @@
 package main
 
-import (
-	"fmt"
-)
+import "covid-19-project/cmd/router"
 
 func main() {
-	fmt.Println("start =================")
+	r := router.SetupRouter()
+	r.Run()
 }
