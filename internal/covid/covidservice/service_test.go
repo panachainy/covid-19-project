@@ -52,7 +52,7 @@ func Test_covidServiceImp_GetCovidSummary(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "when_call_normal_2_should_success",
+			name: "when_call_with_empty_null_province_should_success",
 			fields: fields{
 				Client: func(ctrl *gomock.Controller) covidclient.CovidClient {
 					mock := mockcovidclient.NewMockCovidClient(ctrl)
