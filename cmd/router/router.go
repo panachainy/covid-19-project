@@ -6,14 +6,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter() *gin.Engine {
+func SetupRouter() (*gin.Engine, error) {
 	r := gin.Default()
 
 	covidHandler, err := covid.Wire()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	r.GET("/covid/summary", covidHandler.GetCovidSummary)
-	return r
+	return r, nil
 }
