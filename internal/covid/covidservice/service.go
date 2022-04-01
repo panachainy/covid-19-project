@@ -4,6 +4,8 @@ import (
 	"sync"
 
 	"covid-19-project/internal/covid/covidclient"
+
+	"gopkg.in/guregu/null.v4"
 )
 
 var (
@@ -40,37 +42,30 @@ func (s covidServiceImp) GetCovidSummary() (*CovidResponse, error) {
 	}
 
 	mProvinces := make(map[string]int)
-	ageGroup := &AgeGroup{}
+	mAgeGroup := make(map[string]int)
 
 	for _, v := range resp.Data {
 
 		// Set null to N/A
-		if v.Province == "" {
-			v.Province = "N/A"
+		if !v.Province.Valid {
+			v.Province = null.StringFrom("N/A")
 		}
+		mProvinces[v.Province.ValueOrZero()]++
 
-		// Count by provinces
-		if _, found := mProvinces[v.Province]; found {
-			mProvinces[v.Province]++
-		} else {
-			// New province
-			mProvinces[v.Province] = 1
-		}
-
-		// Count by age เroup
+		// Count by age Group
 		// There are 3 age groups: 0-30, 31-60, and 60+ if the case has no age data, please count as "N/A" group
 		if !v.Age.Valid {
-			ageGroup.NA++
+			mAgeGroup["N/A"]++
 		} else {
 			if v.Age.ValueOrZero() <= 30 {
-				ageGroup.ZeroTo30++
+				mAgeGroup["0-30"]++
 			} else if v.Age.ValueOrZero() <= 60 {
-				ageGroup.ThirtyOneTo60++
+				mAgeGroup["31-60"]++
 			} else if v.Age.ValueOrZero() > 60 {
-				ageGroup.SixtyPlus++
+				mAgeGroup["61+"]++
 			}
 		}
 	}
 
-	return &CovidResponse{Province: mProvinces, AgeGroup: *ageGroup}, nil
+	return &CovidResponse{Province: mProvinces, AgeGroup: mAgeGroup}, nil
 }

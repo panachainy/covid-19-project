@@ -1,0 +1,32 @@
+{
+    "Data": [
+        {
+            "ConfirmDate": "2021-05-04",
+            "No": null,
+            "Age": 51,
+            "Gender": "หญิง",
+            "GenderEn": "Female",
+            "Nation": null,
+            "NationEn": "China",
+            "Province": "",
+            "ProvinceId": 46,
+            "District": null,
+            "ProvinceEn": "Phrae",
+            "StatQuarantine": 5
+        },
+        {
+            "ConfirmDate": "2021-05-01",
+            "No": null,
+            "Age": 51,
+            "Gender": "ชาย",
+            "GenderEn": "Male",
+            "Nation": null,
+            "NationEn": "India",
+            "Province": null,
+            "ProvinceId": 65,
+            "District": null,
+            "ProvinceEn": "Suphan Buri",
+            "StatQuarantine": 8
+        }
+    ]
+}
