@@ -29,7 +29,7 @@ func Test_covidServiceImp_GetCovidSummary(t *testing.T) {
 				Client: func(ctrl *gomock.Controller) covidclient.CovidClient {
 					mock := mock.NewMockCovidClient(ctrl)
 
-					b, err := ioutil.ReadFile("../covidclient/mockcovidclient/01_covid19_response.json")
+					b, err := ioutil.ReadFile("../covidclient/mock/01_covid19_response.json")
 					if err != nil {
 						t.Fatal(err)
 					}
@@ -57,7 +57,7 @@ func Test_covidServiceImp_GetCovidSummary(t *testing.T) {
 				Client: func(ctrl *gomock.Controller) covidclient.CovidClient {
 					mock := mock.NewMockCovidClient(ctrl)
 
-					b, err := ioutil.ReadFile("../covidclient/mockcovidclient/02_covid19_province.json")
+					b, err := ioutil.ReadFile("../covidclient/mock/02_covid19_province.json")
 					if err != nil {
 						t.Fatal(err)
 					}
