@@ -1,6 +1,6 @@
 //go:generate mockgen -source=client.go -destination=mock/mock_client.go -package=mock
 
-package covidclient
+package covid
 
 import (
 	"database/sql"

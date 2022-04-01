@@ -1,10 +1,8 @@
-package covidhandler
+package covid
 
 import (
 	"net/http"
 	"sync"
-
-	"covid-19-project/internal/covid/covidservice"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,10 +17,10 @@ type CovidHandler interface {
 }
 
 type CovidHandlerImp struct {
-	Service covidservice.CovidService
+	Service CovidService
 }
 
-func ProviderCovidHandler(s covidservice.CovidService) *CovidHandlerImp {
+func ProviderCovidHandler(s CovidService) *CovidHandlerImp {
 	covidHandlerOnce.Do(func() {
 		covidHandler = &CovidHandlerImp{
 			Service: s,

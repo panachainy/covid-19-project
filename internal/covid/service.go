@@ -1,11 +1,9 @@
 //go:generate mockgen -source=service.go -destination=mock/mock_service.go -package=mock
 
-package covidservice
+package covid
 
 import (
 	"sync"
-
-	"covid-19-project/internal/covid/covidclient"
 
 	"gopkg.in/guregu/null.v4"
 )
@@ -20,10 +18,10 @@ type CovidService interface {
 }
 
 type CovidServiceImp struct {
-	Client covidclient.CovidClient
+	Client CovidClient
 }
 
-func ProviderCovidService(c covidclient.CovidClient) *CovidServiceImp {
+func ProviderCovidService(c CovidClient) *CovidServiceImp {
 	return &CovidServiceImp{
 		Client: c,
 	}

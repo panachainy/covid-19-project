@@ -1,4 +1,4 @@
-package covidclient
+package covid
 
 import "gopkg.in/guregu/null.v4"
 
@@ -19,4 +19,8 @@ type Covid19Data struct {
 	District       interface{} `json:"District"`
 	ProvinceEn     string      `json:"ProvinceEn"`
 	StatQuarantine int         `json:"StatQuarantine"`
+}
+type CovidResponse struct {
+	Province map[string]int `json:"Province"`
+	AgeGroup map[string]int `json:"AgeGroup"`
 }

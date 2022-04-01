@@ -5,7 +5,7 @@
 package mock
 
 import (
-	covidclient "covid-19-project/internal/covid/covidclient"
+	covid "covid-19-project/internal/covid"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -35,10 +35,10 @@ func (m *MockCovidClient) EXPECT() *MockCovidClientMockRecorder {
 }
 
 // GetCovidCases mocks base method.
-func (m *MockCovidClient) GetCovidCases() (*covidclient.Covid19, error) {
+func (m *MockCovidClient) GetCovidCases() (*covid.Covid19, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCovidCases")
-	ret0, _ := ret[0].(*covidclient.Covid19)
+	ret0, _ := ret[0].(*covid.Covid19)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

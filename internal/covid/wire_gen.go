@@ -6,17 +6,11 @@
 
 package covid
 
-import (
-	"covid-19-project/internal/covid/covidclient"
-	"covid-19-project/internal/covid/covidhandler"
-	"covid-19-project/internal/covid/covidservice"
-)
-
 // Injectors from wire.go:
 
-func Wire() (covidhandler.CovidHandler, error) {
-	covidClientImp := covidclient.ProviderCovidClient()
-	covidServiceImp := covidservice.ProviderCovidService(covidClientImp)
-	covidHandlerImp := covidhandler.ProviderCovidHandler(covidServiceImp)
+func Wire() (CovidHandler, error) {
+	covidClientImp := ProviderCovidClient()
+	covidServiceImp := ProviderCovidService(covidClientImp)
+	covidHandlerImp := ProviderCovidHandler(covidServiceImp)
 	return covidHandlerImp, nil
 }

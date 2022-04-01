@@ -1,4 +1,4 @@
-package covidhandler
+package covid_test
 
 import (
 	"fmt"
@@ -6,8 +6,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"covid-19-project/internal/covid/covidservice"
-	"covid-19-project/internal/covid/covidservice/mock"
+	"covid-19-project/internal/covid"
+	"covid-19-project/internal/covid/mock"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
@@ -20,7 +20,7 @@ func TestCovidHandlerImp_GetCovidSummary(t *testing.T) {
 		body       string
 	}
 	type fields struct {
-		Service func(ctrl *gomock.Controller) covidservice.CovidService
+		Service func(ctrl *gomock.Controller) covid.CovidService
 	}
 	tests := []struct {
 		name   string
@@ -30,11 +30,11 @@ func TestCovidHandlerImp_GetCovidSummary(t *testing.T) {
 		{
 			name: "when_normal_should_success",
 			fields: fields{
-				Service: func(ctrl *gomock.Controller) covidservice.CovidService {
+				Service: func(ctrl *gomock.Controller) covid.CovidService {
 					mock := mock.NewMockCovidService(ctrl)
 
 					mock.EXPECT().GetCovidSummary().Return(
-						&covidservice.CovidResponse{
+						&covid.CovidResponse{
 							Province: map[string]int{"Amnat Charoen": 17},
 							AgeGroup: map[string]int{"0-30": 4, "31-60": 2, "61+": 1, "N/A": 3},
 						},
@@ -51,7 +51,7 @@ func TestCovidHandlerImp_GetCovidSummary(t *testing.T) {
 		{
 			name: "when_service_error_should_error",
 			fields: fields{
-				Service: func(ctrl *gomock.Controller) covidservice.CovidService {
+				Service: func(ctrl *gomock.Controller) covid.CovidService {
 					mock := mock.NewMockCovidService(ctrl)
 					mock.EXPECT().GetCovidSummary().Return(nil, fmt.Errorf("error from service ja"))
 					return mock
@@ -70,7 +70,7 @@ func TestCovidHandlerImp_GetCovidSummary(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			h := CovidHandlerImp{
+			h := covid.CovidHandlerImp{
 				Service: tt.fields.Service(ctrl),
 			}
 			w := httptest.NewRecorder()
