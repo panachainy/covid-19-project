@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"covid-19-project/internal/covid/covidclient"
-	"covid-19-project/internal/covid/covidclient/mockcovidclient"
+	"covid-19-project/internal/covid/covidclient/mock"
 
 	"github.com/golang/mock/gomock"
 )
@@ -27,7 +27,7 @@ func Test_covidServiceImp_GetCovidSummary(t *testing.T) {
 			name: "when_call_normal_should_success",
 			fields: fields{
 				Client: func(ctrl *gomock.Controller) covidclient.CovidClient {
-					mock := mockcovidclient.NewMockCovidClient(ctrl)
+					mock := mock.NewMockCovidClient(ctrl)
 
 					b, err := ioutil.ReadFile("../covidclient/mockcovidclient/01_covid19_response.json")
 					if err != nil {
@@ -55,7 +55,7 @@ func Test_covidServiceImp_GetCovidSummary(t *testing.T) {
 			name: "when_call_with_empty_null_province_should_success",
 			fields: fields{
 				Client: func(ctrl *gomock.Controller) covidclient.CovidClient {
-					mock := mockcovidclient.NewMockCovidClient(ctrl)
+					mock := mock.NewMockCovidClient(ctrl)
 
 					b, err := ioutil.ReadFile("../covidclient/mockcovidclient/02_covid19_province.json")
 					if err != nil {
@@ -80,7 +80,7 @@ func Test_covidServiceImp_GetCovidSummary(t *testing.T) {
 			name: "when_external_error_should_error",
 			fields: fields{
 				Client: func(ctrl *gomock.Controller) covidclient.CovidClient {
-					mock := mockcovidclient.NewMockCovidClient(ctrl)
+					mock := mock.NewMockCovidClient(ctrl)
 
 					mock.EXPECT().GetCovidCases().Return(&covidclient.Covid19{}, fmt.Errorf("external error ja"))
 
