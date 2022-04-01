@@ -2,24 +2,44 @@ package covidhandler
 
 import (
 	"net/http"
+	"sync"
 
 	"covid-19-project/internal/covid/covidservice"
 
 	"github.com/gin-gonic/gin"
 )
 
-// I write this way because if you need to inject some obj to handler you can use with this way.
-//  /covid/summary
-func GetSummaryHandler(service covidservice.CovidService) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		result, err := service.GetCovidSummary()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": err.Error(),
-			})
-			return
-		}
+var (
+	covidHandler     *CovidHandlerImp
+	covidHandlerOnce sync.Once
+)
 
-		c.JSON(http.StatusOK, result)
+type CovidHandler interface {
+	GetCovidSummary(c *gin.Context)
+}
+
+type CovidHandlerImp struct {
+	Service covidservice.CovidService
+}
+
+func ProviderCovidHandler(s covidservice.CovidService) *CovidHandlerImp {
+	covidHandlerOnce.Do(func() {
+		covidHandler = &CovidHandlerImp{
+			Service: s,
+		}
+	})
+
+	return covidHandler
+}
+
+// /covid/summary
+func (h CovidHandlerImp) GetCovidSummary(c *gin.Context) {
+	result, err := h.Service.GetCovidSummary()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+		return
 	}
+	c.JSON(http.StatusOK, result)
 }

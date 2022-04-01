@@ -7,46 +7,41 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
+var (
+	covidClient     *CovidClientImp
+	covidClientOnce sync.Once
+)
+
 // TODO: make it support ENV
 var (
 	COVID_BASEURL   = "http://static.wongnai.com"
 	COVID_CASE_PATH = "/devinterview/covid-cases.json"
 )
 
-var (
-	lock        = &sync.Mutex{}
-	covidClient CovidClient
-)
-
 type CovidClient interface {
 	GetCovidCases() (*Covid19, error)
 }
 
-type covidClientImp struct {
+type CovidClientImp struct {
 	Client *resty.Client
 }
 
-func NewCovidClient(baseUrl string) CovidClient {
-	if covidClient != nil {
-		return covidClient
-	}
-
-	lock.Lock()
-	defer lock.Unlock()
-
+func ProviderCovidClient() *CovidClientImp {
 	client := resty.New()
 
 	// FIXME: Currently WN API can't get with secure way because cert is invalid
 	// after fix that API remove this line
 	client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
+	client.SetBaseURL(COVID_BASEURL)
 
-	client.SetBaseURL(baseUrl)
+	covidClientOnce.Do(func() {
+		covidClient = &CovidClientImp{Client: client}
+	})
 
-	covidClient = &covidClientImp{Client: client}
 	return covidClient
 }
 
-func (c covidClientImp) GetCovidCases() (*Covid19, error) {
+func (c CovidClientImp) GetCovidCases() (*Covid19, error) {
 	resp, err := c.Client.R().
 		// EnableTrace().
 		SetResult(&Covid19{}).

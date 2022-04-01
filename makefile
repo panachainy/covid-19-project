@@ -24,3 +24,6 @@ depend.update:
 
 depend.patch:
 	go get -u=patch
+
+gen:
+	go generate ./...

@@ -9,33 +9,25 @@ import (
 )
 
 var (
-	lock         = &sync.Mutex{}
-	covidService CovidService
+	covidService     *CovidService
+	covidServiceOnce sync.Once
 )
 
 type CovidService interface {
 	GetCovidSummary() (*CovidResponse, error)
 }
 
-type covidServiceImp struct {
+type CovidServiceImp struct {
 	Client covidclient.CovidClient
 }
 
-func NewCovidService() CovidService {
-	if covidService != nil {
-		return covidService
+func ProviderCovidService(c covidclient.CovidClient) *CovidServiceImp {
+	return &CovidServiceImp{
+		Client: c,
 	}
-
-	lock.Lock()
-	defer lock.Unlock()
-
-	covidService = &covidServiceImp{
-		Client: covidclient.NewCovidClient(covidclient.COVID_BASEURL),
-	}
-	return covidService
 }
 
-func (s covidServiceImp) GetCovidSummary() (*CovidResponse, error) {
+func (s CovidServiceImp) GetCovidSummary() (*CovidResponse, error) {
 	resp, err := s.Client.GetCovidCases()
 	if err != nil {
 		return &CovidResponse{}, err

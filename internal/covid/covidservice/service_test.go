@@ -97,7 +97,7 @@ func Test_covidServiceImp_GetCovidSummary(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			s := covidServiceImp{
+			s := CovidServiceImp{
 				Client: tt.fields.Client(ctrl),
 			}
 			got, err := s.GetCovidSummary()
