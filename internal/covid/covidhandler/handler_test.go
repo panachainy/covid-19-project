@@ -7,36 +7,36 @@ import (
 	"testing"
 
 	"covid-19-project/internal/covid/covidservice"
-	"covid-19-project/internal/covid/covidservice/mockcovidservice"
+	"covid-19-project/internal/covid/covidservice/mock"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetSummaryHandler(t *testing.T) {
-	type args struct {
-		service func(ctrl *gomock.Controller) covidservice.CovidService
-	}
+func TestCovidHandlerImp_GetCovidSummary(t *testing.T) {
 	type want struct {
 		statusCode int
 		body       string
 	}
+	type fields struct {
+		Service func(ctrl *gomock.Controller) covidservice.CovidService
+	}
 	tests := []struct {
-		name string
-		args args
-		want want
+		name   string
+		fields fields
+		want   want
 	}{
 		{
-			name: "when_call_normal_should_success",
-			args: args{
-				service: func(ctrl *gomock.Controller) covidservice.CovidService {
-					mock := mockcovidservice.NewMockCovidService(ctrl)
+			name: "when_normal_should_success",
+			fields: fields{
+				Service: func(ctrl *gomock.Controller) covidservice.CovidService {
+					mock := mock.NewMockCovidService(ctrl)
 
 					mock.EXPECT().GetCovidSummary().Return(
 						&covidservice.CovidResponse{
 							Province: map[string]int{"Amnat Charoen": 17},
-							AgeGroup: covidservice.AgeGroup{ZeroTo30: 4, ThirtyOneTo60: 10, SixtyPlus: 2, NA: 1},
+							AgeGroup: map[string]int{"0-30": 4, "31-60": 2, "61+": 1, "N/A": 3},
 						},
 						nil)
 
@@ -45,17 +45,15 @@ func TestGetSummaryHandler(t *testing.T) {
 			},
 			want: want{
 				statusCode: 200,
-				body:       `{"AgeGroup": {"0-30":4, "31-60":10, "61+":2, "N/A":1}, "Province": {"Amnat Charoen":17}}`,
+				body:       `{"AgeGroup": {"0-30":4, "31-60":2, "61+":1, "N/A":3}, "Province": {"Amnat Charoen":17}}`,
 			},
 		},
 		{
 			name: "when_service_error_should_error",
-			args: args{
-				service: func(ctrl *gomock.Controller) covidservice.CovidService {
-					mock := mockcovidservice.NewMockCovidService(ctrl)
-
+			fields: fields{
+				Service: func(ctrl *gomock.Controller) covidservice.CovidService {
+					mock := mock.NewMockCovidService(ctrl)
 					mock.EXPECT().GetCovidSummary().Return(nil, fmt.Errorf("error from service ja"))
-
 					return mock
 				},
 			},
@@ -66,20 +64,24 @@ func TestGetSummaryHandler(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		gin.SetMode(gin.TestMode)
+
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			summaryHandler := GetSummaryHandler(tt.args.service(ctrl))
-
+			h := CovidHandlerImp{
+				Service: tt.fields.Service(ctrl),
+			}
 			w := httptest.NewRecorder()
+
 			c, _ := gin.CreateTestContext(w)
 
 			c.Request = &http.Request{
 				Header: make(http.Header),
 			}
 
-			summaryHandler(c)
+			h.GetCovidSummary(c)
 
 			got := string(w.Body.Bytes())
 
