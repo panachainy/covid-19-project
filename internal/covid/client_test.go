@@ -1,12 +1,12 @@
-//go:generate mockgen -source=client.go -destination=mock/mock_client.go -package=mock
-
-package covid
+package covid_test
 
 import (
 	"database/sql"
 	"fmt"
 	"reflect"
 	"testing"
+
+	"covid-19-project/internal/covid"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/jarcoal/httpmock"
@@ -35,7 +35,7 @@ func TestCovidClientImp_GetCovidCases(t *testing.T) {
 	tests := []struct {
 		name    string
 		fields  fields
-		want    *Covid19
+		want    *covid.Covid19
 		wantErr bool
 	}{
 		{
@@ -46,7 +46,7 @@ func TestCovidClientImp_GetCovidCases(t *testing.T) {
 					httpmock.Reset()
 
 					fakeUrl := "/devinterview/covid-cases.json"
-					fixture := &Covid19{Data: []Covid19Data{{Province: null.StringFrom("xxx"), Age: null.IntFrom(2)}}}
+					fixture := &covid.Covid19{Data: []covid.Covid19Data{{Province: null.StringFrom("xxx"), Age: null.IntFrom(2)}}}
 
 					mockResponder, err := httpmock.NewJsonResponder(200, fixture)
 					if err != nil {
@@ -58,13 +58,13 @@ func TestCovidClientImp_GetCovidCases(t *testing.T) {
 					return client
 				},
 			},
-			want:    &Covid19{Data: []Covid19Data{{ConfirmDate: "", No: interface{}(nil), Age: null.Int{NullInt64: sql.NullInt64{Int64: 2, Valid: true}}, Gender: "", GenderEn: "", Nation: interface{}(nil), NationEn: "", Province: null.String{NullString: sql.NullString{String: "xxx", Valid: true}}, ProvinceID: 0, District: interface{}(nil), ProvinceEn: "", StatQuarantine: 0}}},
+			want:    &covid.Covid19{Data: []covid.Covid19Data{{ConfirmDate: "", No: interface{}(nil), Age: null.Int{NullInt64: sql.NullInt64{Int64: 2, Valid: true}}, Gender: "", GenderEn: "", Nation: interface{}(nil), NationEn: "", Province: null.String{NullString: sql.NullString{String: "xxx", Valid: true}}, ProvinceID: 0, District: interface{}(nil), ProvinceEn: "", StatQuarantine: 0}}},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := CovidClientImp{
+			c := covid.CovidClientImp{
 				Client: tt.fields.Client(),
 			}
 			got, err := c.GetCovidCases()
